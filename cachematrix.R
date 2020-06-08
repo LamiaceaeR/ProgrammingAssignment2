@@ -1,21 +1,27 @@
-#Here's a test matrix
-M1 <- matrix(c(23,56,12,4,8,12,1,4,19), ncol = 3, nrow = 3)
-
-#This function say if the matrix input can be solved
-makeCacheMatrix <- function(x){
-  d <- det(x)
-  if(d!=0){
-    print("its posible to inverse")
-    } else{
-      print("matrix must be square")
-    }
-  return(d)
-  return(x)
+## This function creates a special "matrix" object that can cache its inverse.
+makeCacheMatrix <- function(x = matrix()) {
+  InverseMatrix <- NULL
+  set <- function(y){
+    x <<- y
+    InverseMatrix <<- NULL
+  }
+  get <- function() x
+  setInverseMatrix <- function(solveInverseMatrix) InverseMatrix <<- solveInverseMatrix
+  getInverseMatrix <- function() InverseMatrix
+  list(set = set, get = get,
+       setInverseMatrix = setInverseMatrix, getInverseMatrix = getInverseMatrix)
 }
 
-#This function solve the matrix and show the solution
-CacheSolve <- function(x){
-  MInv <- solve(x)
-  
-  return(MInv)
+## this function checks if the inverse is already calculated and retrives the inverse.
+cacheSolveInverseMatrix <- function(x, ...) {
+  ## Return a matrix that is the inverse of 'x'
+  InverseMatrix <- x$getInverseMatrix()
+  if(!is.null(InverseMatrix)){
+    message("getting the data of the matrix")
+    return(InverseMatrix)
+  }
+  Data <- x$get()
+  InverseMatrix <- solve(Data, ...)
+  x$setInverseMatrix(InverseMatrix)
+  InverseMatrix
 }
